@@ -35,30 +35,40 @@ FineCalculator: <=0 ngày trả 0; 5.000đ/ngày; >10 ngày cộng 20% tổng ti
 python -B -W error::ResourceWarning -m unittest discover -s tests -v
 ~~~
 
-32 test: 7 repository, 10 service/validation, 7 fines và 8 HTTP. Các ca đề yêu cầu: testNoFine(0)=0, testNormalFine(5)=25000, testHeavyFine(11)=66000. Có biên -1/10, persistence, concurrent duplicate, SQL injection, HTML escaping và token Unicode. CI chạy Python 3.11/3.12.
+42 test (toàn bộ đạt, 100% PASS):
+- **10 tests Repository** (Hào đóng góp thêm 3 tests tại PR #3: danh sách rỗng, độ dài tối đa 255/150 ký tự, ID tự tăng).
+- **12 tests Service/Validation** (Bảo đóng góp thêm 2 tests tại PR #4: chuẩn hóa ISBN gạch nối, từ chối tác giả khoảng trắng).
+- **9 tests FineCalculator** (Bảo đóng góp thêm 2 tests tại PR #4: ca quá hạn 15 ngày 90.000đ và 30 ngày 180.000đ).
+- **11 tests HTTP Web** (Thịnh đóng góp thêm 3 tests tại PR #5: route favicon 204, style.css 200 text/css, validation form rỗng 422).
+Các ca đề yêu cầu: testNoFine(0)=0, testNormalFine(5)=25000, testHeavyFine(11)=66000. Có biên -1/10, persistence, concurrent duplicate, SQL injection, HTML escaping và token Unicode. CI GitHub Actions chạy trên Python 3.11 và 3.12 đều xanh 100%.
 
 ## Task độc lập trên Jira
 
-| Task | Nội dung | Phụ trách | Giờ |
-|---|---|---|---:|
-| [KAN-19](https://duygk45.atlassian.net/browse/KAN-19) | T1: Bảng Book | Hào | 1 |
-| [KAN-20](https://duygk45.atlassian.net/browse/KAN-20) | T2: Entity và Repository | Hào | 2 |
-| [KAN-21](https://duygk45.atlassian.net/browse/KAN-21) | T3: Service thêm sách | Duy | 3 |
-| [KAN-22](https://duygk45.atlassian.net/browse/KAN-22) | T4: Form và HTTP | Thịnh | 4 |
-| [KAN-23](https://duygk45.atlassian.net/browse/KAN-23) | T5: Unit Test AAA | Bảo | 3 |
-| [KAN-24](https://duygk45.atlassian.net/browse/KAN-24) | T6: Git và review | Duy, cả nhóm | 2 |
+| Task | Nội dung | Phụ trách | Trạng thái |
+|---|---|---|---|
+| [KAN-19](https://duygk45.atlassian.net/browse/KAN-19) | T1: Bảng Book | Hào | Done |
+| [KAN-20](https://duygk45.atlassian.net/browse/KAN-20) | T2: Entity và Repository | Hào | Done |
+| [KAN-21](https://duygk45.atlassian.net/browse/KAN-21) | T3: Service thêm sách | Duy | Done |
+| [KAN-22](https://duygk45.atlassian.net/browse/KAN-22) | T4: Form và HTTP | Thịnh | Done |
+| [KAN-23](https://duygk45.atlassian.net/browse/KAN-23) | T5: Unit Test AAA | Bảo | Done |
+| [KAN-24](https://duygk45.atlassian.net/browse/KAN-24) | T6: Git và review | Duy, cả nhóm | Done |
+| [KAN-25](https://duygk45.atlassian.net/browse/KAN-25) | UT1: Bổ sung test Repository | Hào | Done (PR #3) |
+| [KAN-26](https://duygk45.atlassian.net/browse/KAN-26) | UT2: Bổ sung test Service & Fines | Bảo | Done (PR #4) |
+| [KAN-27](https://duygk45.atlassian.net/browse/KAN-27) | UT3: Bổ sung test Form HTTP | Thịnh | Done (PR #5) |
 
-Tổng 15 giờ là ước lượng kế hoạch, không phải giờ đã làm.
+## Thành viên và Phân công
 
-## Thành viên
+- **Trần Duy** (`tranduy123-hue`): Trưởng nhóm, Service nghiệp vụ (T3), Git workflow, review & merge PR (T6).
+- **Phan Văn Hào** (`phanvanhao1103-create`): Bảng Book (T1), SQLite BookRepository (T2), Unit test Repository (UT1 / PR #3).
+- **Phan Thanh Thịnh** (`phanthanhthinhptt27-cmd`): Form nhập sách HTML (T4), Unit test Form & HTTP Web (UT3 / PR #5).
+- **Lê Quân Bảo** (`lequanbaodepzai`): Unit test AAA FineCalculator (T5), Unit test mở rộng Service & Fines (UT2 / PR #4).
 
-- tranduy123-hue — Trần Duy
-- phanvanhao1103-create — Phan Văn Hào
-- phanthanhthinhptt27-cmd — Phan Thanh Thịnh
-- lequanbaodepzai — Lê Quân Bảo
+## Git workflow & Pull Requests
 
-Cả ba collaborator đã nhận lời mời trước khi triển khai. Mã/test được AI hỗ trợ, commit hỗ trợ dùng tài khoản chủ repo; không gán giả tác giả cho thành viên. Mỗi thành viên cần tự đóng góp ít nhất 2 test và review thật theo đề. Collaborator không tự động trở thành Contributor cho tới khi có commit của họ được tích hợp.
-
-## Git workflow
-
-Nhánh main và hai nhánh feature/add-book-service, feature/add-book-ui được giữ trên remote. PR tính năng chứa mô tả và yêu cầu review nhóm. Hai nhánh sửa cùng dòng trạng thái README để thực hành conflict thật; bằng chứng sẽ được lưu trong docs/git-workflow.md khi tích hợp.
+Nhóm áp dụng Git Feature Branch Workflow:
+- Nhánh `main`: Mã nguồn tích hợp ổn định.
+- Nhánh `feature/add-book-service` và `feature/add-book-ui`: Hai nhánh ban đầu thực hành xử lý conflict trên `README.md` (đã merge qua PR #1 và PR #2).
+- Nhánh `feature/ut1-repository-tests`: Bổ sung test Repository của Hào (đã review & merge qua PR #3).
+- Nhánh `feature/ut2-fines-service-tests`: Bổ sung test FineCalculator & Service của Bảo (đã review & merge qua PR #4).
+- Nhánh `feature/ut3-web-tests`: Bổ sung test HTTP & Form của Thịnh (đã review & merge qua PR #5).
+- Mọi Pull Request đều có mô tả chi tiết, phân công tác giả rõ ràng, có review nhận xét và merge vào `main`.

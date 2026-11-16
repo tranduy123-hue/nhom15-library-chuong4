@@ -106,3 +106,54 @@ class RoleADatabaseTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             self.repo.add("Title", "Author", invalid)
         self.assertEqual(self.repo.list_all(), [])
+
+
+class RoleARepositoryEnhancementTests(unittest.TestCase):
+    """UT1 (KAN-25): Bổ sung unit test kiểm thử SqliteBookRepository bởi Phan Văn Hào."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.database = Path(self.temp.name) / "books.sqlite3"
+        self.repo = SqliteBookRepository(self.database)
+        self.addCleanup(self.repo.close)
+        self.repo.initialize()
+
+    def test_empty_repository_returns_empty_list(self):
+        # 1. Arrange: repository đã khởi tạo nhưng chưa có sách
+        # 2. Act: lấy toàn bộ danh mục sách
+        books = self.repo.list_all()
+        # 3. Assert: kết quả là danh sách rỗng
+        self.assertEqual(books, [])
+
+    def test_add_book_with_max_length_fields_and_retrieve(self):
+        # 1. Arrange: sách có độ dài tiêu đề 255 ký tự và tác giả 150 ký tự
+        max_title = "A" * 255
+        max_author = "B" * 150
+        isbn = "9780132350884"
+        # 2. Act: lưu sách vào database và kiểm tra tồn tại
+        saved_book = self.repo.add(max_title, max_author, isbn)
+        exists = self.repo.exists_by_isbn(isbn)
+        all_books = self.repo.list_all()
+        # 3. Assert: sách được lưu chính xác và tìm thấy bằng exists_by_isbn
+        self.assertTrue(exists)
+        self.assertEqual(len(all_books), 1)
+        self.assertEqual(all_books[0].title, max_title)
+        self.assertEqual(all_books[0].author, max_author)
+        self.assertEqual(all_books[0].isbn, isbn)
+
+    def test_multiple_books_preserve_incremental_ids(self):
+        # 1. Arrange: chuẩn bị 3 cuốn sách khác nhau
+        books_data = [
+            ("Lập trình Python", "Tác giả 1", "9780441172719"),
+            ("Clean Code", "Robert C. Martin", "9780132350884"),
+            ("Design Patterns", "GoF", "9780201633610"),
+        ]
+        # 2. Act: thêm lần lượt vào database
+        added = [self.repo.add(t, a, i) for t, a, i in books_data]
+        all_books = self.repo.list_all()
+        # 3. Assert: ID tự tăng tuần tự và danh sách đầy đủ
+        self.assertEqual(len(all_books), 3)
+        self.assertTrue(added[0].id < added[1].id < added[2].id)
+        self.assertEqual([b.isbn for b in all_books], ["9780441172719", "9780132350884", "9780201633610"])
+

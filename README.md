@@ -1,0 +1,64 @@
+# Nhóm 15 — Hệ thống Quản lý Thư viện
+
+Bài thực hành Chương 4: Phát triển, Tích hợp và Đảm bảo chất lượng.
+
+Trạng thái tích hợp: khởi tạo.
+
+- Jira: https://duygk45.atlassian.net/jira/software/projects/KAN/boards/1
+- GitHub: https://github.com/tranduy123-hue/nhom15-library-chuong4
+
+User Story: Là thủ thư, tôi muốn thêm sách mới vào hệ thống để quản lý tài sản thư viện.
+
+## Chạy ứng dụng
+
+Python 3.11 hoặc 3.12; chỉ dùng thư viện chuẩn, không cần pip install.
+
+~~~sh
+git clone https://github.com/tranduy123-hue/nhom15-library-chuong4.git
+cd nhom15-library-chuong4
+python app.py
+~~~
+
+Mở http://127.0.0.1:8765, dừng bằng Ctrl+C. Có thể dùng --port 8766 --database demo.sqlite3. SQLite được tạo tự động; dữ liệu không đưa vào Git. Ứng dụng thực hành local, chưa có đăng nhập để triển khai công khai.
+
+## Phạm vi
+
+Book gồm id, title, author, isbn. Tên và tác giả không rỗng, tối đa 255/150 ký tự. ISBN-10/13 được kiểm tra checksum, bỏ khoảng trắng/gạch nối và chuẩn hóa X; UNIQUE trong SQLite bảo vệ cả ghi đồng thời. ISBN-10/13 tương đương vẫn là hai chuỗi định danh riêng, không quy đổi chéo.
+
+Form tiếng Việt thêm và hiển thị sách, giữ dữ liệu khi lỗi, escape HTML, kiểm tra CSRF. Nhập thử Clean Code / Robert C. Martin / 9780132350884. Nhập lại ISBN 978-0-13-235088-4 để kiểm tra báo trùng.
+
+FineCalculator: <=0 ngày trả 0; 5.000đ/ngày; >10 ngày cộng 20% tổng tiền phạt bằng số nguyên.
+
+## Kiểm thử AAA
+
+~~~sh
+python -B -W error::ResourceWarning -m unittest discover -s tests -v
+~~~
+
+32 test: 7 repository, 10 service/validation, 7 fines và 8 HTTP. Các ca đề yêu cầu: testNoFine(0)=0, testNormalFine(5)=25000, testHeavyFine(11)=66000. Có biên -1/10, persistence, concurrent duplicate, SQL injection, HTML escaping và token Unicode. CI chạy Python 3.11/3.12.
+
+## Task độc lập trên Jira
+
+| Task | Nội dung | Phụ trách | Giờ |
+|---|---|---|---:|
+| [KAN-19](https://duygk45.atlassian.net/browse/KAN-19) | T1: Bảng Book | Hào | 1 |
+| [KAN-20](https://duygk45.atlassian.net/browse/KAN-20) | T2: Entity và Repository | Hào | 2 |
+| [KAN-21](https://duygk45.atlassian.net/browse/KAN-21) | T3: Service thêm sách | Duy | 3 |
+| [KAN-22](https://duygk45.atlassian.net/browse/KAN-22) | T4: Form và HTTP | Thịnh | 4 |
+| [KAN-23](https://duygk45.atlassian.net/browse/KAN-23) | T5: Unit Test AAA | Bảo | 3 |
+| [KAN-24](https://duygk45.atlassian.net/browse/KAN-24) | T6: Git và review | Duy, cả nhóm | 2 |
+
+Tổng 15 giờ là ước lượng kế hoạch, không phải giờ đã làm.
+
+## Thành viên
+
+- tranduy123-hue — Trần Duy
+- phanvanhao1103-create — Phan Văn Hào
+- phanthanhthinhptt27-cmd — Phan Thanh Thịnh
+- lequanbaodepzai — Lê Quân Bảo
+
+Cả ba collaborator đã nhận lời mời trước khi triển khai. Mã/test được AI hỗ trợ, commit hỗ trợ dùng tài khoản chủ repo; không gán giả tác giả cho thành viên. Mỗi thành viên cần tự đóng góp ít nhất 2 test và review thật theo đề. Collaborator không tự động trở thành Contributor cho tới khi có commit của họ được tích hợp.
+
+## Git workflow
+
+Nhánh main và hai nhánh feature/add-book-service, feature/add-book-ui được giữ trên remote. PR tính năng chứa mô tả và yêu cầu review nhóm. Hai nhánh sửa cùng dòng trạng thái README để thực hành conflict thật; bằng chứng sẽ được lưu trong docs/git-workflow.md khi tích hợp.

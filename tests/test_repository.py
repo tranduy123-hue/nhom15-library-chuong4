@@ -157,3 +157,17 @@ class RoleARepositoryEnhancementTests(unittest.TestCase):
         self.assertTrue(added[0].id < added[1].id < added[2].id)
         self.assertEqual([b.isbn for b in all_books], ["9780441172719", "9780132350884", "9780201633610"])
 
+    def test_unicode_vietnamese_titles_and_authors(self):
+        # 1. Arrange: sách có tiếng Việt có dấu đầy đủ
+        title = "Nhập môn Công nghệ Phần mềm"
+        author = "Phan Văn Hào"
+        isbn = "9780321125217"
+        # 2. Act
+        self.repo.add(title, author, isbn)
+        retrieved = self.repo.list_all()
+        # 3. Assert: lưu và đọc lại chính xác nguyên vẹn ký tự Unicode
+        self.assertEqual(retrieved[-1].title, title)
+        self.assertEqual(retrieved[-1].author, author)
+        self.assertEqual(retrieved[-1].isbn, isbn)
+
+

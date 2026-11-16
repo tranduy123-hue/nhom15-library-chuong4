@@ -149,6 +149,16 @@ class WebTests(unittest.TestCase):
         self.assertEqual(status, 422)
         self.assertIn('Title must be a nonempty string', html)
 
+    def test_security_headers_present_in_response(self):
+        # 1. Arrange: server đang chạy
+        # 2. Act: gửi request GET /
+        status, _, headers = self.request('GET', '/')
+        # 3. Assert: kiểm tra các header bảo mật quan trọng
+        self.assertEqual(status, 200)
+        self.assertIn('Content-Security-Policy', headers)
+        self.assertEqual(headers.get('X-Content-Type-Options'), 'nosniff')
+
+
 
 
 

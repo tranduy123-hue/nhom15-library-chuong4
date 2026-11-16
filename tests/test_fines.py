@@ -87,3 +87,24 @@ class RoleCFineEnhancementTests(unittest.TestCase):
         self.assertEqual(result, expected)
         self.assertEqual(result, 180000)
 
+    def test_one_day_overdue_fine_normal_rate(self):
+        # 1. Arrange: quá hạn 1 ngày (dưới 10 ngày áp dụng 5.000đ/ngày)
+        days_overdue = 1
+        expected = 5000
+        # 2. Act
+        result = FineCalculator.calculate(days_overdue)
+        # 3. Assert
+        self.assertEqual(result, expected)
+        self.assertEqual(result, 5000)
+
+    def test_twenty_days_overdue_fine_with_surcharge(self):
+        # 1. Arrange: quá hạn 20 ngày
+        days_overdue = 20
+        expected = int(20 * 5000 * 1.2)  # 120.000 đ
+        # 2. Act
+        result = FineCalculator.calculate(days_overdue)
+        # 3. Assert
+        self.assertEqual(result, expected)
+        self.assertEqual(result, 120000)
+
+

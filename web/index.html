@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Danh mục sách · Thư viện</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Đến nội dung chính</a>
+<header><a href="/" class="brand">Thư viện<span>Quản lý danh mục</span></a><span class="local">Bản thực hành · Lưu trên máy</span></header>
+<main id="main">
+  <div class="page-heading"><div><h1>Danh mục sách</h1><p>Ghi nhận sách mới, giữ danh mục luôn chính xác.</p></div><p class="count">$count sách đã lưu</p></div>
+  $notice
+  $errors
+  <div class="workspace">
+    <section class="intake" aria-labelledby="add-heading">
+      <h2 id="add-heading">Thêm sách mới</h2>
+      <p class="intro">Điền đủ ba trường bên dưới.</p>
+      <form method="post" action="/books">
+        <input type="hidden" name="token" value="$token">
+        <label for="title">Tên sách</label><input id="title" name="title" maxlength="255" required value="$title" placeholder="Ví dụ: Clean Code" autocomplete="off">
+        <label for="author">Tác giả</label><input id="author" name="author" maxlength="150" required value="$author" placeholder="Ví dụ: Robert C. Martin" autocomplete="off">
+        <label for="isbn">ISBN</label><input id="isbn" name="isbn" maxlength="64" required value="$isbn" aria-describedby="isbn-help" placeholder="9780132350884" autocomplete="off">
+        <p class="help" id="isbn-help">ISBN-10 hoặc ISBN-13 hợp lệ. Có thể nhập dấu gạch nối; mỗi ISBN chỉ được lưu một lần.</p>
+        <button type="submit">Thêm vào danh mục <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+    <section class="catalog" aria-labelledby="catalog-heading">
+      <div class="section-heading"><h2 id="catalog-heading">Sách trong thư viện</h2><span>Lưu bằng SQLite</span></div>
+      $empty
+      <div class="table-wrap"><table><caption class="sr-only">Danh sách sách đã được lưu</caption><thead><tr><th scope="col">Mã</th><th scope="col">Tên sách</th><th scope="col">Tác giả</th><th scope="col">ISBN</th></tr></thead><tbody>$rows</tbody></table></div>
+    </section>
+  </div>
+  <section class="fine-section" aria-labelledby="fine-heading">
+    <div><h2 id="fine-heading">Tính tiền phạt quá hạn</h2><p>5.000 đ/ngày. Quá 10 ngày cộng thêm 20% tổng tiền phạt.<br>Không phạt khi số ngày nhỏ hơn hoặc bằng 0.</p></div>
+    <form method="post" action="/fines" class="fine-form">
+      <input type="hidden" name="token" value="$token">
+      <div><label for="days">Số ngày quá hạn</label><input type="number" id="days" name="days" step="1" min="-1000000" max="1000000" required value="$days" placeholder="Ví dụ: 11"></div>
+      <button type="submit" class="secondary">Tính tiền phạt</button>
+      <output aria-live="polite">$fine</output>
+    </form>
+  </section>
+</main>
+<footer>Chương 4 · Sprint 1 Mini<span>Python / SQLite / Unit Test AAA</span></footer>
+</body>
+</html>

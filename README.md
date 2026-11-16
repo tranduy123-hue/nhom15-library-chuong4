@@ -2,7 +2,7 @@
 
 Bài thực hành Chương 4: Phát triển, Tích hợp và Đảm bảo chất lượng.
 
-Trạng thái tích hợp: form HTML và kiểm thử HTTP sẵn sàng.
+Trạng thái tích hợp: backend, form HTML và kiểm thử AAA/HTTP đã tích hợp.
 
 - Jira: https://duygk45.atlassian.net/jira/software/projects/KAN/boards/1
 - GitHub: https://github.com/tranduy123-hue/nhom15-library-chuong4

@@ -118,3 +118,29 @@ class RoleCFormValidationTests(ServiceTestCase):
         with self.assertRaises(ValidationError):
             service.add_book(" ", "Author", "9780441172719")
         repo.add.assert_not_called()
+
+
+class RoleBServiceEnhancementTests(ServiceTestCase):
+    """UT2 (KAN-26): Bổ sung unit test logic BookService bởi Lê Quân Bảo."""
+
+    def test_add_book_with_hyphenated_isbn13_and_retrieve(self):
+        # 1. Arrange: chuẩn bị sách với ISBN-13 có nhiều dấu gạch ngang
+        title = "Clean Code"
+        author = "Robert C. Martin"
+        raw_isbn = "978-0-13-235088-4"
+        # 2. Act: gọi addBook và lấy danh sách
+        book = self.service.add_book(title, author, raw_isbn)
+        all_books = self.service.list_books()
+        # 3. Assert: ISBN được chuẩn hóa bỏ dấu gạch ngang
+        self.assertEqual(book.isbn, "9780132350884")
+        self.assertIn(book, all_books)
+
+    def test_reject_empty_or_whitespace_author(self):
+        # 1. Arrange: tác giả là chuỗi khoảng trắng
+        title = "Refactoring"
+        author = "    "
+        isbn = "9780201485677"
+        # 2. Act & 3. Assert: ném ngoại lệ ValidationError
+        with self.assertRaises(ValidationError):
+            self.service.add_book(title, author, isbn)
+

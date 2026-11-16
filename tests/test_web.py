@@ -123,6 +123,34 @@ class WebTests(unittest.TestCase):
                 # Assert
                 self.assertEqual(status, 404)
 
+    def test_favicon_endpoint_returns_204(self):
+        # 1. Arrange: server đang chạy
+        # 2. Act: gửi request GET /favicon.ico
+        status, content, _ = self.request('GET', '/favicon.ico')
+        # 3. Assert: trả về 204 No Content và nội dung rỗng
+        self.assertEqual(status, 204)
+        self.assertEqual(content, '')
+
+    def test_static_stylesheet_serves_css_content_type(self):
+        # 1. Arrange: server đang chạy
+        # 2. Act: gửi request GET /style.css
+        status, content, headers = self.request('GET', '/style.css')
+        # 3. Assert: trả về 200, header Content-Type text/css và nội dung css
+        self.assertEqual(status, 200)
+        self.assertIn('text/css', headers.get('Content-Type', ''))
+        self.assertIn('body', content)
+
+    def test_post_book_with_whitespace_title_returns_422_with_error_message(self):
+        # 1. Arrange: form có title là khoảng trắng
+        fields = self.book_fields(title='    ')
+        # 2. Act: gửi request POST /books
+        status, html, _ = self.request('POST', '/books', fields)
+        # 3. Assert: status 422 và form hiển thị thông báo lỗi
+        self.assertEqual(status, 422)
+        self.assertIn('Title must be a nonempty string', html)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
